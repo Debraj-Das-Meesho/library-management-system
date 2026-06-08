@@ -1,0 +1,62 @@
+# ── Maven ────────────────────────────────────────────
+target/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+# ── IDE: IntelliJ IDEA ───────────────────────────────
+.idea/
+*.iml
+*.ipr
+*.iws
+out/
+
+# ── IDE: Eclipse / STS ───────────────────────────────
+.classpath
+.project
+.settings/
+.springBeans
+.sts4-cache
+
+# ── IDE: VS Code ─────────────────────────────────────
+.vscode/
+*.code-workspace
+
+# ── OS ───────────────────────────────────────────────
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+
+# ── Spring Boot ──────────────────────────────────────
+*.log
+*.pid
+spring-shell.log
+logs/
+
+# ── Environment / secrets ────────────────────────────
+.env
+.env.local
+.env.*.local
+application-local.yml
+application-secrets.yml
+*.key
+*.pem
+*.p12
+*.jks
+
+# ── Docker overrides ─────────────────────────────────
+docker-compose.override.yml
+
+# ── Test reports ─────────────────────────────────────
+**/surefire-reports/
+**/failsafe-reports/
+
+# ── Misc ─────────────────────────────────────────────
+*.class
+*.jar
+!gradle/wrapper/gradle-wrapper.jar
