@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Entity
@@ -38,7 +37,7 @@ public class BorrowRecord implements Serializable {
 
     @Column(precision = 10, scale = 2)
     @Builder.Default
-    private BigDecimal fineAmount = BigDecimal.ZERO;
+    private double fineAmount = 0.0;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

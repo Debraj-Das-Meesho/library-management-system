@@ -15,7 +15,6 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
@@ -51,7 +50,7 @@ public class BorrowService {
             .borrowDate(LocalDate.now())
             .dueDate(LocalDate.now().plusDays(days))
             .status(BorrowStatus.BORROWED)
-            .fineAmount(BigDecimal.ZERO)
+            .fineAmount(0.0)
             .build();
 
         book.setAvailableCopies(book.getAvailableCopies() - 1);
@@ -74,7 +73,7 @@ public class BorrowService {
 
         if (returnDate.isAfter(record.getDueDate())) {
             long daysLate = ChronoUnit.DAYS.between(record.getDueDate(), returnDate);
-            record.setFineAmount(AppConstants.FINE_PER_DAY.multiply(BigDecimal.valueOf(daysLate)));
+            record.setFineAmount(AppConstants.FINE_PER_DAY * daysLate);
         }
 
         record.getBook().setAvailableCopies(record.getBook().getAvailableCopies() + 1);

@@ -1,7 +1,5 @@
 package com.library.management.utils.constants;
 
-import java.math.BigDecimal;
-
 public final class AppConstants {
 
     private AppConstants() {}
@@ -20,5 +18,5 @@ public final class AppConstants {
 
     // Borrow defaults
     public static final int DEFAULT_BORROW_DAYS = 14;
-    public static final BigDecimal FINE_PER_DAY = new BigDecimal("0.50");
+    public static final double FINE_PER_DAY = 0.50;
 }

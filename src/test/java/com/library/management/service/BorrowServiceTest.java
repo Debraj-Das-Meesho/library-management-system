@@ -14,7 +14,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -73,7 +72,7 @@ class BorrowServiceTest {
             .borrowDate(LocalDate.now())
             .dueDate(LocalDate.now().plusDays(14))
             .status(BorrowStatus.BORROWED)
-            .fineAmount(BigDecimal.ZERO)
+            .fineAmount(0.0)
             .build();
     }
 
@@ -168,7 +167,7 @@ class BorrowServiceTest {
         assertThat(result.getStatus()).isEqualTo(BorrowStatus.RETURNED);
         assertThat(result.getReturnDate()).isEqualTo(LocalDate.now());
         assertThat(book.getAvailableCopies()).isEqualTo(4);
-        assertThat(result.getFineAmount()).isEqualByComparingTo(BigDecimal.ZERO);
+        assertThat(result.getFineAmount()).isEqualByComparingTo(0.0);
     }
 
     @Test
@@ -182,7 +181,7 @@ class BorrowServiceTest {
 
         // 5 days × $0.50 = $2.50
         assertThat(borrowRecord.getFineAmount())
-            .isEqualByComparingTo(new BigDecimal("2.50"));
+            .isEqualByComparingTo(2.50);
     }
 
     @Test
@@ -194,7 +193,7 @@ class BorrowServiceTest {
 
         borrowService.returnBook(1L);
 
-        assertThat(borrowRecord.getFineAmount()).isEqualByComparingTo(BigDecimal.ZERO);
+        assertThat(borrowRecord.getFineAmount()).isEqualByComparingTo(0.0);
     }
 
     @Test

@@ -4,7 +4,6 @@ import com.library.management.model.BorrowStatus;
 import lombok.*;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Getter
@@ -22,6 +21,6 @@ public class BorrowResponseDTO implements Serializable {
     private LocalDate borrowDate;
     private LocalDate dueDate;
     private LocalDate returnDate;
-    private BigDecimal fineAmount;
+    private double fineAmount;
     private BorrowStatus status;
 }

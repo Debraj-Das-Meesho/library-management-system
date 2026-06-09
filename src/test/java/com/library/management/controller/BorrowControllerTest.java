@@ -16,7 +16,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -52,7 +51,7 @@ class BorrowControllerTest {
             .memberName("Alice Johnson")
             .borrowDate(LocalDate.of(2026, 6, 8))
             .dueDate(LocalDate.of(2026, 6, 22))
-            .fineAmount(BigDecimal.ZERO)
+            .fineAmount(0.0)
             .status(BorrowStatus.BORROWED)
             .build();
 
@@ -65,7 +64,7 @@ class BorrowControllerTest {
             .borrowDate(LocalDate.of(2026, 6, 8))
             .dueDate(LocalDate.of(2026, 6, 22))
             .returnDate(LocalDate.of(2026, 6, 10))
-            .fineAmount(BigDecimal.ZERO)
+            .fineAmount(0.0)
             .status(BorrowStatus.RETURNED)
             .build();
     }
@@ -173,7 +172,7 @@ class BorrowControllerTest {
             .borrowDate(LocalDate.of(2026, 5, 1))
             .dueDate(LocalDate.of(2026, 5, 15))
             .returnDate(LocalDate.of(2026, 5, 20))
-            .fineAmount(new BigDecimal("2.50"))
+            .fineAmount(2.50)
             .status(BorrowStatus.RETURNED)
             .build();
         when(borrowService.returnBook(1L)).thenReturn(lateReturn);
