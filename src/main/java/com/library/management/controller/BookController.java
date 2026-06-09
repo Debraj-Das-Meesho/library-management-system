@@ -1,6 +1,7 @@
 package com.library.management.controller;
 
 import com.library.management.dto.BookDTO;
+import com.library.management.dto.BookResponseDTO;
 import com.library.management.service.BookService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -18,37 +19,37 @@ public class BookController {
     private final BookService bookService;
 
     @GetMapping
-    public ResponseEntity<List<BookDTO>> getAllBooks() {
+    public ResponseEntity<List<BookResponseDTO>> getAllBooks() {
         return ResponseEntity.ok(bookService.getAllBooks());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<BookDTO> getBookById(@PathVariable Long id) {
+    public ResponseEntity<BookResponseDTO> getBookById(@PathVariable Long id) {
         return ResponseEntity.ok(bookService.getBookById(id));
     }
 
     @GetMapping("/available")
-    public ResponseEntity<List<BookDTO>> getAvailableBooks() {
+    public ResponseEntity<List<BookResponseDTO>> getAvailableBooks() {
         return ResponseEntity.ok(bookService.getAvailableBooks());
     }
 
     @GetMapping("/search/title")
-    public ResponseEntity<List<BookDTO>> searchByTitle(@RequestParam String title) {
+    public ResponseEntity<List<BookResponseDTO>> searchByTitle(@RequestParam String title) {
         return ResponseEntity.ok(bookService.searchByTitle(title));
     }
 
     @GetMapping("/search/genre")
-    public ResponseEntity<List<BookDTO>> searchByGenre(@RequestParam String genre) {
+    public ResponseEntity<List<BookResponseDTO>> searchByGenre(@RequestParam String genre) {
         return ResponseEntity.ok(bookService.searchByGenre(genre));
     }
 
     @PostMapping
-    public ResponseEntity<BookDTO> createBook(@Valid @RequestBody BookDTO dto) {
+    public ResponseEntity<BookResponseDTO> createBook(@Valid @RequestBody BookDTO dto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(bookService.createBook(dto));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<BookDTO> updateBook(@PathVariable Long id, @Valid @RequestBody BookDTO dto) {
+    public ResponseEntity<BookResponseDTO> updateBook(@PathVariable Long id, @Valid @RequestBody BookDTO dto) {
         return ResponseEntity.ok(bookService.updateBook(id, dto));
     }
 

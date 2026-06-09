@@ -1,6 +1,7 @@
 package com.library.management.service;
 
 import com.library.management.dto.AuthorDTO;
+import com.library.management.dto.AuthorResponseDTO;
 import com.library.management.exception.ResourceNotFoundException;
 import com.library.management.model.Author;
 import com.library.management.repository.AuthorRepository;
@@ -53,7 +54,7 @@ class AuthorServiceTest {
             .build();
         when(authorRepository.save(any(Author.class))).thenReturn(author);
 
-        AuthorDTO result = authorService.createAuthor(dto);
+        AuthorResponseDTO result = authorService.createAuthor(dto);
 
         assertThat(result.getId()).isEqualTo(1L);
         assertThat(result.getName()).isEqualTo("George Orwell");
@@ -68,7 +69,7 @@ class AuthorServiceTest {
     void getAuthorById_returnsDTO_whenFound() {
         when(authorRepository.findById(1L)).thenReturn(Optional.of(author));
 
-        AuthorDTO result = authorService.getAuthorById(1L);
+        AuthorResponseDTO result = authorService.getAuthorById(1L);
 
         assertThat(result.getName()).isEqualTo("George Orwell");
         assertThat(result.getBio()).isEqualTo("English novelist and essayist");
@@ -92,10 +93,10 @@ class AuthorServiceTest {
         Author second = Author.builder().id(2L).name("J.K. Rowling").nationality("British").build();
         when(authorRepository.findAll()).thenReturn(List.of(author, second));
 
-        List<AuthorDTO> results = authorService.getAllAuthors();
+        List<AuthorResponseDTO> results = authorService.getAllAuthors();
 
         assertThat(results).hasSize(2);
-        assertThat(results).extracting(AuthorDTO::getName)
+        assertThat(results).extracting(AuthorResponseDTO::getName)
             .containsExactlyInAnyOrder("George Orwell", "J.K. Rowling");
     }
 
@@ -104,7 +105,7 @@ class AuthorServiceTest {
     void getAllAuthors_returnsEmptyList_whenNoAuthors() {
         when(authorRepository.findAll()).thenReturn(List.of());
 
-        List<AuthorDTO> results = authorService.getAllAuthors();
+        List<AuthorResponseDTO> results = authorService.getAllAuthors();
 
         assertThat(results).isEmpty();
     }
@@ -168,7 +169,7 @@ class AuthorServiceTest {
         when(authorRepository.findByNameContainingIgnoreCase("Orwell"))
             .thenReturn(List.of(author));
 
-        List<AuthorDTO> results = authorService.searchAuthors("Orwell");
+        List<AuthorResponseDTO> results = authorService.searchAuthors("Orwell");
 
         assertThat(results).hasSize(1);
         assertThat(results.get(0).getName()).isEqualTo("George Orwell");
@@ -180,7 +181,7 @@ class AuthorServiceTest {
         when(authorRepository.findByNameContainingIgnoreCase("Tolkien"))
             .thenReturn(List.of());
 
-        List<AuthorDTO> results = authorService.searchAuthors("Tolkien");
+        List<AuthorResponseDTO> results = authorService.searchAuthors("Tolkien");
 
         assertThat(results).isEmpty();
     }

@@ -1,11 +1,13 @@
 package com.library.management.service;
 
 import com.library.management.dto.BookDTO;
+import com.library.management.dto.BookResponseDTO;
 import com.library.management.exception.ResourceNotFoundException;
 import com.library.management.model.Author;
 import com.library.management.model.Book;
 import com.library.management.repository.AuthorRepository;
 import com.library.management.repository.BookRepository;
+import com.library.management.utils.constants.AppConstants;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -23,44 +25,44 @@ public class BookService {
     private final BookRepository bookRepository;
     private final AuthorRepository authorRepository;
 
-    @Cacheable(value = "books", key = "'all'")
+    @Cacheable(value = AppConstants.CACHE_BOOKS, key = AppConstants.CACHE_KEY_ALL)
     @Transactional(readOnly = true)
-    public List<BookDTO> getAllBooks() {
+    public List<BookResponseDTO> getAllBooks() {
         return bookRepository.findAll().stream()
             .map(this::toDTO)
             .collect(Collectors.toList());
     }
 
-    @Cacheable(value = "books", key = "#id")
+    @Cacheable(value = AppConstants.CACHE_BOOKS, key = "#id")
     @Transactional(readOnly = true)
-    public BookDTO getBookById(Long id) {
+    public BookResponseDTO getBookById(Long id) {
         return toDTO(findById(id));
     }
 
-    @Cacheable(value = "books", key = "'available'")
+    @Cacheable(value = AppConstants.CACHE_BOOKS, key = AppConstants.CACHE_KEY_AVAILABLE)
     @Transactional(readOnly = true)
-    public List<BookDTO> getAvailableBooks() {
+    public List<BookResponseDTO> getAvailableBooks() {
         return bookRepository.findByAvailableCopiesGreaterThan(0).stream()
             .map(this::toDTO)
             .collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
-    public List<BookDTO> searchByTitle(String title) {
+    public List<BookResponseDTO> searchByTitle(String title) {
         return bookRepository.findByTitleContainingIgnoreCase(title).stream()
             .map(this::toDTO)
             .collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
-    public List<BookDTO> searchByGenre(String genre) {
+    public List<BookResponseDTO> searchByGenre(String genre) {
         return bookRepository.findByGenreIgnoreCase(genre).stream()
             .map(this::toDTO)
             .collect(Collectors.toList());
     }
 
-    @CacheEvict(value = "books", allEntries = true)
-    public BookDTO createBook(BookDTO dto) {
+    @CacheEvict(value = AppConstants.CACHE_BOOKS, allEntries = true)
+    public BookResponseDTO createBook(BookDTO dto) {
         Author author = resolveAuthor(dto.getAuthorId());
         Book book = Book.builder()
             .title(dto.getTitle())
@@ -74,8 +76,8 @@ public class BookService {
         return toDTO(bookRepository.save(book));
     }
 
-    @CacheEvict(value = "books", allEntries = true)
-    public BookDTO updateBook(Long id, BookDTO dto) {
+    @CacheEvict(value = AppConstants.CACHE_BOOKS, allEntries = true)
+    public BookResponseDTO updateBook(Long id, BookDTO dto) {
         Book book = findById(id);
         Author author = resolveAuthor(dto.getAuthorId());
         book.setTitle(dto.getTitle());
@@ -87,7 +89,7 @@ public class BookService {
         return toDTO(bookRepository.save(book));
     }
 
-    @CacheEvict(value = "books", allEntries = true)
+    @CacheEvict(value = AppConstants.CACHE_BOOKS, allEntries = true)
     public void deleteBook(Long id) {
         bookRepository.delete(findById(id));
     }
@@ -102,8 +104,8 @@ public class BookService {
             .orElseThrow(() -> new ResourceNotFoundException("Author not found with id: " + authorId));
     }
 
-    private BookDTO toDTO(Book book) {
-        return BookDTO.builder()
+    private BookResponseDTO toDTO(Book book) {
+        return BookResponseDTO.builder()
             .id(book.getId())
             .title(book.getTitle())
             .isbn(book.getIsbn())
@@ -113,6 +115,8 @@ public class BookService {
             .availableCopies(book.getAvailableCopies())
             .authorId(book.getAuthor() != null ? book.getAuthor().getId() : null)
             .authorName(book.getAuthor() != null ? book.getAuthor().getName() : null)
+            .createdAt(book.getCreatedAt())
+            .updatedAt(book.getUpdatedAt())
             .build();
     }
 }

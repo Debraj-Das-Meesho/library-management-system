@@ -14,8 +14,6 @@ import java.io.Serializable;
 @Builder
 public class BookDTO implements Serializable {
 
-    private Long id;
-
     @NotBlank(message = "Title is required")
     private String title;
 

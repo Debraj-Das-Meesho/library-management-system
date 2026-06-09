@@ -9,6 +9,7 @@ import com.library.management.model.BorrowRecord;
 import com.library.management.model.BorrowStatus;
 import com.library.management.model.Member;
 import com.library.management.repository.BorrowRecordRepository;
+import com.library.management.utils.constants.AppConstants;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
@@ -25,14 +26,12 @@ import java.util.stream.Collectors;
 @Transactional
 public class BorrowService {
 
-    private static final int DEFAULT_BORROW_DAYS = 14;
-    private static final BigDecimal FINE_PER_DAY = new BigDecimal("0.50");
 
     private final BorrowRecordRepository borrowRecordRepository;
     private final BookService bookService;
     private final MemberService memberService;
 
-    @CacheEvict(value = "books", allEntries = true)
+    @CacheEvict(value = AppConstants.CACHE_BOOKS, allEntries = true)
     public BorrowResponseDTO borrowBook(BorrowRequestDTO request) {
         Book book = bookService.findById(request.getBookId());
         Member member = memberService.findById(request.getMemberId());
@@ -44,7 +43,7 @@ public class BorrowService {
             throw new BookNotAvailableException("No copies available for: " + book.getTitle());
         }
 
-        int days = request.getBorrowDays() != null ? request.getBorrowDays() : DEFAULT_BORROW_DAYS;
+        int days = request.getBorrowDays() != null ? request.getBorrowDays() : AppConstants.DEFAULT_BORROW_DAYS;
 
         BorrowRecord record = BorrowRecord.builder()
             .book(book)
@@ -60,7 +59,7 @@ public class BorrowService {
         return toDTO(borrowRecordRepository.save(record));
     }
 
-    @CacheEvict(value = "books", allEntries = true)
+    @CacheEvict(value = AppConstants.CACHE_BOOKS, allEntries = true)
     public BorrowResponseDTO returnBook(Long borrowRecordId) {
         BorrowRecord record = borrowRecordRepository.findById(borrowRecordId)
             .orElseThrow(() -> new ResourceNotFoundException("Borrow record not found with id: " + borrowRecordId));
@@ -75,7 +74,7 @@ public class BorrowService {
 
         if (returnDate.isAfter(record.getDueDate())) {
             long daysLate = ChronoUnit.DAYS.between(record.getDueDate(), returnDate);
-            record.setFineAmount(FINE_PER_DAY.multiply(BigDecimal.valueOf(daysLate)));
+            record.setFineAmount(AppConstants.FINE_PER_DAY.multiply(BigDecimal.valueOf(daysLate)));
         }
 
         record.getBook().setAvailableCopies(record.getBook().getAvailableCopies() + 1);

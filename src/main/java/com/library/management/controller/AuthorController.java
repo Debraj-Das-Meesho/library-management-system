@@ -1,6 +1,7 @@
 package com.library.management.controller;
 
 import com.library.management.dto.AuthorDTO;
+import com.library.management.dto.AuthorResponseDTO;
 import com.library.management.service.AuthorService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -18,27 +19,27 @@ public class AuthorController {
     private final AuthorService authorService;
 
     @GetMapping
-    public ResponseEntity<List<AuthorDTO>> getAllAuthors() {
+    public ResponseEntity<List<AuthorResponseDTO>> getAllAuthors() {
         return ResponseEntity.ok(authorService.getAllAuthors());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<AuthorDTO> getAuthorById(@PathVariable Long id) {
+    public ResponseEntity<AuthorResponseDTO> getAuthorById(@PathVariable Long id) {
         return ResponseEntity.ok(authorService.getAuthorById(id));
     }
 
     @GetMapping("/search")
-    public ResponseEntity<List<AuthorDTO>> searchAuthors(@RequestParam String name) {
+    public ResponseEntity<List<AuthorResponseDTO>> searchAuthors(@RequestParam String name) {
         return ResponseEntity.ok(authorService.searchAuthors(name));
     }
 
     @PostMapping
-    public ResponseEntity<AuthorDTO> createAuthor(@Valid @RequestBody AuthorDTO dto) {
+    public ResponseEntity<AuthorResponseDTO> createAuthor(@Valid @RequestBody AuthorDTO dto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(authorService.createAuthor(dto));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<AuthorDTO> updateAuthor(@PathVariable Long id, @Valid @RequestBody AuthorDTO dto) {
+    public ResponseEntity<AuthorResponseDTO> updateAuthor(@PathVariable Long id, @Valid @RequestBody AuthorDTO dto) {
         return ResponseEntity.ok(authorService.updateAuthor(id, dto));
     }
 

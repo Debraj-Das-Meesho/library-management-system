@@ -1,21 +1,21 @@
 package com.library.management.dto;
 
-import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class AuthorDTO implements Serializable {
+public class AuthorResponseDTO implements Serializable {
 
-    @NotBlank(message = "Author name is required")
+    private Long id;
     private String name;
-
     private String bio;
-
     private String nationality;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 }

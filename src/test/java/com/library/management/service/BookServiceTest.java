@@ -1,6 +1,7 @@
 package com.library.management.service;
 
 import com.library.management.dto.BookDTO;
+import com.library.management.dto.BookResponseDTO;
 import com.library.management.exception.ResourceNotFoundException;
 import com.library.management.model.Author;
 import com.library.management.model.Book;
@@ -75,7 +76,7 @@ class BookServiceTest {
         when(authorRepository.findById(1L)).thenReturn(Optional.of(author));
         when(bookRepository.save(any(Book.class))).thenReturn(book);
 
-        BookDTO result = bookService.createBook(bookDTO);
+        BookResponseDTO result = bookService.createBook(bookDTO);
 
         assertThat(result.getTitle()).isEqualTo("1984");
         assertThat(result.getAuthorName()).isEqualTo("George Orwell");
@@ -104,7 +105,7 @@ class BookServiceTest {
     void getBookById_returnsDTO_whenFound() {
         when(bookRepository.findById(1L)).thenReturn(Optional.of(book));
 
-        BookDTO result = bookService.getBookById(1L);
+        BookResponseDTO result = bookService.getBookById(1L);
 
         assertThat(result.getTitle()).isEqualTo("1984");
         assertThat(result.getIsbn()).isEqualTo("978-0-452-28423-4");
@@ -127,7 +128,7 @@ class BookServiceTest {
     void getAllBooks_returnsAllBooks() {
         when(bookRepository.findAll()).thenReturn(List.of(book));
 
-        List<BookDTO> results = bookService.getAllBooks();
+        List<BookResponseDTO> results = bookService.getAllBooks();
 
         assertThat(results).hasSize(1);
         assertThat(results.get(0).getTitle()).isEqualTo("1984");
@@ -140,7 +141,7 @@ class BookServiceTest {
     void getAvailableBooks_returnsOnlyBooksWithCopies() {
         when(bookRepository.findByAvailableCopiesGreaterThan(0)).thenReturn(List.of(book));
 
-        List<BookDTO> results = bookService.getAvailableBooks();
+        List<BookResponseDTO> results = bookService.getAvailableBooks();
 
         assertThat(results).hasSize(1);
         assertThat(results.get(0).getAvailableCopies()).isGreaterThan(0);
@@ -210,7 +211,7 @@ class BookServiceTest {
         when(bookRepository.findByTitleContainingIgnoreCase("1984"))
             .thenReturn(List.of(book));
 
-        List<BookDTO> results = bookService.searchByTitle("1984");
+        List<BookResponseDTO> results = bookService.searchByTitle("1984");
 
         assertThat(results).hasSize(1);
         assertThat(results.get(0).getTitle()).isEqualTo("1984");
@@ -222,7 +223,7 @@ class BookServiceTest {
         when(bookRepository.findByGenreIgnoreCase("Dystopian Fiction"))
             .thenReturn(List.of(book));
 
-        List<BookDTO> results = bookService.searchByGenre("Dystopian Fiction");
+        List<BookResponseDTO> results = bookService.searchByGenre("Dystopian Fiction");
 
         assertThat(results).hasSize(1);
         assertThat(results.get(0).getGenre()).isEqualTo("Dystopian Fiction");

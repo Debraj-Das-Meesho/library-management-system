@@ -2,6 +2,7 @@ package com.library.management.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.library.management.dto.BookDTO;
+import com.library.management.dto.BookResponseDTO;
 import com.library.management.exception.ResourceNotFoundException;
 import com.library.management.service.BookService;
 import org.junit.jupiter.api.BeforeEach;
@@ -35,11 +36,11 @@ class BookControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    private BookDTO bookDTO;
+    private BookResponseDTO bookResponse;
 
     @BeforeEach
     void setUp() {
-        bookDTO = BookDTO.builder()
+        bookResponse = BookResponseDTO.builder()
             .id(1L)
             .title("1984")
             .isbn("978-0-452-28423-4")
@@ -57,7 +58,7 @@ class BookControllerTest {
     @Test
     @DisplayName("GET /api/books → 200 with array of books")
     void getAllBooks_returns200WithBookList() throws Exception {
-        when(bookService.getAllBooks()).thenReturn(List.of(bookDTO));
+        when(bookService.getAllBooks()).thenReturn(List.of(bookResponse));
 
         mockMvc.perform(get("/api/books"))
             .andDo(print())
@@ -85,7 +86,7 @@ class BookControllerTest {
     @Test
     @DisplayName("GET /api/books/{id} → 200 with book when found")
     void getBookById_returns200WhenFound() throws Exception {
-        when(bookService.getBookById(1L)).thenReturn(bookDTO);
+        when(bookService.getBookById(1L)).thenReturn(bookResponse);
 
         mockMvc.perform(get("/api/books/1"))
             .andExpect(status().isOk())
@@ -111,7 +112,7 @@ class BookControllerTest {
     @Test
     @DisplayName("GET /api/books/available → 200 with available books")
     void getAvailableBooks_returns200() throws Exception {
-        when(bookService.getAvailableBooks()).thenReturn(List.of(bookDTO));
+        when(bookService.getAvailableBooks()).thenReturn(List.of(bookResponse));
 
         mockMvc.perform(get("/api/books/available"))
             .andExpect(status().isOk())
@@ -123,7 +124,7 @@ class BookControllerTest {
     @Test
     @DisplayName("GET /api/books/search/title → 200 with matching books")
     void searchByTitle_returns200() throws Exception {
-        when(bookService.searchByTitle("1984")).thenReturn(List.of(bookDTO));
+        when(bookService.searchByTitle("1984")).thenReturn(List.of(bookResponse));
 
         mockMvc.perform(get("/api/books/search/title").param("title", "1984"))
             .andExpect(status().isOk())
@@ -133,7 +134,7 @@ class BookControllerTest {
     @Test
     @DisplayName("GET /api/books/search/genre → 200 with genre-filtered books")
     void searchByGenre_returns200() throws Exception {
-        when(bookService.searchByGenre("Dystopian Fiction")).thenReturn(List.of(bookDTO));
+        when(bookService.searchByGenre("Dystopian Fiction")).thenReturn(List.of(bookResponse));
 
         mockMvc.perform(get("/api/books/search/genre").param("genre", "Dystopian Fiction"))
             .andExpect(status().isOk())
@@ -153,7 +154,7 @@ class BookControllerTest {
             .totalCopies(5)
             .authorId(1L)
             .build();
-        when(bookService.createBook(any(BookDTO.class))).thenReturn(bookDTO);
+        when(bookService.createBook(any(BookDTO.class))).thenReturn(bookResponse);
 
         mockMvc.perform(post("/api/books")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -218,7 +219,15 @@ class BookControllerTest {
     @Test
     @DisplayName("PUT /api/books/{id} → 200 with updated book")
     void updateBook_returns200WithUpdatedBody() throws Exception {
-        BookDTO updated = BookDTO.builder()
+        BookDTO request = BookDTO.builder()
+            .title("1984 Special Edition")
+            .isbn("978-0-452-28423-4")
+            .genre("Dystopian Fiction")
+            .publishedYear(1949)
+            .totalCopies(10)
+            .authorId(1L)
+            .build();
+        BookResponseDTO updated = BookResponseDTO.builder()
             .id(1L).title("1984 Special Edition").isbn("978-0-452-28423-4")
             .genre("Dystopian Fiction").publishedYear(1949).totalCopies(10)
             .availableCopies(10).authorId(1L).authorName("George Orwell")
@@ -227,7 +236,7 @@ class BookControllerTest {
 
         mockMvc.perform(put("/api/books/1")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(updated)))
+                .content(objectMapper.writeValueAsString(request)))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.title").value("1984 Special Edition"))
             .andExpect(jsonPath("$.totalCopies").value(10));
@@ -236,12 +245,18 @@ class BookControllerTest {
     @Test
     @DisplayName("PUT /api/books/{id} → 404 when book does not exist")
     void updateBook_returns404WhenNotFound() throws Exception {
+        BookDTO request = BookDTO.builder()
+            .title("1984")
+            .isbn("978-0-452-28423-4")
+            .totalCopies(5)
+            .authorId(1L)
+            .build();
         when(bookService.updateBook(eq(99L), any(BookDTO.class)))
             .thenThrow(new ResourceNotFoundException("Book not found with id: 99"));
 
         mockMvc.perform(put("/api/books/99")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(bookDTO)))
+                .content(objectMapper.writeValueAsString(request)))
             .andExpect(status().isNotFound());
     }
 

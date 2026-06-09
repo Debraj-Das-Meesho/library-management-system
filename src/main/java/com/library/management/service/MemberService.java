@@ -1,9 +1,11 @@
 package com.library.management.service;
 
 import com.library.management.dto.MemberDTO;
+import com.library.management.dto.MemberResponseDTO;
 import com.library.management.exception.ResourceNotFoundException;
 import com.library.management.model.Member;
 import com.library.management.repository.MemberRepository;
+import com.library.management.utils.constants.AppConstants;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -21,29 +23,29 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
 
-    @Cacheable(value = "members", key = "'all'")
+    @Cacheable(value = AppConstants.CACHE_MEMBERS, key = AppConstants.CACHE_KEY_ALL)
     @Transactional(readOnly = true)
-    public List<MemberDTO> getAllMembers() {
+    public List<MemberResponseDTO> getAllMembers() {
         return memberRepository.findAll().stream()
             .map(this::toDTO)
             .collect(Collectors.toList());
     }
 
-    @Cacheable(value = "members", key = "#id")
+    @Cacheable(value = AppConstants.CACHE_MEMBERS, key = "#id")
     @Transactional(readOnly = true)
-    public MemberDTO getMemberById(Long id) {
+    public MemberResponseDTO getMemberById(Long id) {
         return toDTO(findById(id));
     }
 
     @Transactional(readOnly = true)
-    public List<MemberDTO> searchMembers(String name) {
+    public List<MemberResponseDTO> searchMembers(String name) {
         return memberRepository.findByNameContainingIgnoreCase(name).stream()
             .map(this::toDTO)
             .collect(Collectors.toList());
     }
 
-    @CacheEvict(value = "members", allEntries = true)
-    public MemberDTO createMember(MemberDTO dto) {
+    @CacheEvict(value = AppConstants.CACHE_MEMBERS, allEntries = true)
+    public MemberResponseDTO createMember(MemberDTO dto) {
         Member member = Member.builder()
             .name(dto.getName())
             .email(dto.getEmail())
@@ -54,8 +56,8 @@ public class MemberService {
         return toDTO(memberRepository.save(member));
     }
 
-    @CacheEvict(value = "members", allEntries = true)
-    public MemberDTO updateMember(Long id, MemberDTO dto) {
+    @CacheEvict(value = AppConstants.CACHE_MEMBERS, allEntries = true)
+    public MemberResponseDTO updateMember(Long id, MemberDTO dto) {
         Member member = findById(id);
         member.setName(dto.getName());
         member.setEmail(dto.getEmail());
@@ -66,14 +68,14 @@ public class MemberService {
         return toDTO(memberRepository.save(member));
     }
 
-    @CacheEvict(value = "members", allEntries = true)
-    public MemberDTO deactivateMember(Long id) {
+    @CacheEvict(value = AppConstants.CACHE_MEMBERS, allEntries = true)
+    public MemberResponseDTO deactivateMember(Long id) {
         Member member = findById(id);
         member.setActive(false);
         return toDTO(memberRepository.save(member));
     }
 
-    @CacheEvict(value = "members", allEntries = true)
+    @CacheEvict(value = AppConstants.CACHE_MEMBERS, allEntries = true)
     public void deleteMember(Long id) {
         memberRepository.delete(findById(id));
     }
@@ -83,8 +85,8 @@ public class MemberService {
             .orElseThrow(() -> new ResourceNotFoundException("Member not found with id: " + id));
     }
 
-    private MemberDTO toDTO(Member member) {
-        return MemberDTO.builder()
+    private MemberResponseDTO toDTO(Member member) {
+        return MemberResponseDTO.builder()
             .id(member.getId())
             .name(member.getName())
             .email(member.getEmail())

@@ -1,6 +1,7 @@
 package com.library.management.service;
 
 import com.library.management.dto.MemberDTO;
+import com.library.management.dto.MemberResponseDTO;
 import com.library.management.exception.ResourceNotFoundException;
 import com.library.management.model.Member;
 import com.library.management.repository.MemberRepository;
@@ -56,7 +57,7 @@ class MemberServiceTest {
             .build();
         when(memberRepository.save(any(Member.class))).thenReturn(member);
 
-        MemberDTO result = memberService.createMember(dto);
+        MemberResponseDTO result = memberService.createMember(dto);
 
         assertThat(result.getName()).isEqualTo("Alice Johnson");
         assertThat(result.getActive()).isTrue();
@@ -74,7 +75,7 @@ class MemberServiceTest {
     void getMemberById_returnsDTO_whenFound() {
         when(memberRepository.findById(1L)).thenReturn(Optional.of(member));
 
-        MemberDTO result = memberService.getMemberById(1L);
+        MemberResponseDTO result = memberService.getMemberById(1L);
 
         assertThat(result.getEmail()).isEqualTo("alice@example.com");
         assertThat(result.getActive()).isTrue();
@@ -99,10 +100,10 @@ class MemberServiceTest {
             .email("bob@example.com").active(true).build();
         when(memberRepository.findAll()).thenReturn(List.of(member, second));
 
-        List<MemberDTO> results = memberService.getAllMembers();
+        List<MemberResponseDTO> results = memberService.getAllMembers();
 
         assertThat(results).hasSize(2);
-        assertThat(results).extracting(MemberDTO::getName)
+        assertThat(results).extracting(MemberResponseDTO::getName)
             .containsExactlyInAnyOrder("Alice Johnson", "Bob Smith");
     }
 
@@ -196,7 +197,7 @@ class MemberServiceTest {
         when(memberRepository.findByNameContainingIgnoreCase("Alice"))
             .thenReturn(List.of(member));
 
-        List<MemberDTO> results = memberService.searchMembers("Alice");
+        List<MemberResponseDTO> results = memberService.searchMembers("Alice");
 
         assertThat(results).hasSize(1);
         assertThat(results.get(0).getName()).isEqualTo("Alice Johnson");

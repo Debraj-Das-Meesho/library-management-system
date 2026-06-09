@@ -1,7 +1,5 @@
 package com.library.management.dto;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 import java.io.Serializable;
@@ -12,18 +10,12 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class MemberDTO implements Serializable {
+public class MemberResponseDTO implements Serializable {
 
-    @NotBlank(message = "Name is required")
+    private Long id;
     private String name;
-
-    @NotBlank(message = "Email is required")
-    @Email(message = "Invalid email format")
     private String email;
-
     private String phone;
-
     private LocalDate membershipDate;
-
     private Boolean active;
 }

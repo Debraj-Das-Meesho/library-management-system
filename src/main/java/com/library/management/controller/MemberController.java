@@ -1,6 +1,7 @@
 package com.library.management.controller;
 
 import com.library.management.dto.MemberDTO;
+import com.library.management.dto.MemberResponseDTO;
 import com.library.management.service.MemberService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -18,32 +19,32 @@ public class MemberController {
     private final MemberService memberService;
 
     @GetMapping
-    public ResponseEntity<List<MemberDTO>> getAllMembers() {
+    public ResponseEntity<List<MemberResponseDTO>> getAllMembers() {
         return ResponseEntity.ok(memberService.getAllMembers());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<MemberDTO> getMemberById(@PathVariable Long id) {
+    public ResponseEntity<MemberResponseDTO> getMemberById(@PathVariable Long id) {
         return ResponseEntity.ok(memberService.getMemberById(id));
     }
 
     @GetMapping("/search")
-    public ResponseEntity<List<MemberDTO>> searchMembers(@RequestParam String name) {
+    public ResponseEntity<List<MemberResponseDTO>> searchMembers(@RequestParam String name) {
         return ResponseEntity.ok(memberService.searchMembers(name));
     }
 
     @PostMapping
-    public ResponseEntity<MemberDTO> createMember(@Valid @RequestBody MemberDTO dto) {
+    public ResponseEntity<MemberResponseDTO> createMember(@Valid @RequestBody MemberDTO dto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(memberService.createMember(dto));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<MemberDTO> updateMember(@PathVariable Long id, @Valid @RequestBody MemberDTO dto) {
+    public ResponseEntity<MemberResponseDTO> updateMember(@PathVariable Long id, @Valid @RequestBody MemberDTO dto) {
         return ResponseEntity.ok(memberService.updateMember(id, dto));
     }
 
     @PatchMapping("/{id}/deactivate")
-    public ResponseEntity<MemberDTO> deactivateMember(@PathVariable Long id) {
+    public ResponseEntity<MemberResponseDTO> deactivateMember(@PathVariable Long id) {
         return ResponseEntity.ok(memberService.deactivateMember(id));
     }
 
